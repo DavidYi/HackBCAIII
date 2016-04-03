@@ -27,14 +27,16 @@ supported_languages = {'ar' : ' Arabic','bg' : 'Bulgarian','ca' : 'Catalan','zh-
 supported_languages = {y.lower():x for x,y in supported_languages.iteritems()}
 
 twilioPhone = "15519996857"
+language = None
+recipient = None
 
 #recieve the text message
 @app.route("/", methods=['GET', 'POST'])
 def receive():
+	global language
+	global recipient
 	message = request.form["Body"]
 	sender = request.form["From"]
-	language = None
-	recipient = None
 	resp = twiml.Response()
 	
 	if message == "\help":
@@ -55,16 +57,17 @@ def receive():
 		try:
 			int(message[2:])
 			recipient = message[2:]
-			conversations[sender] = recipient
-			conversations[recipient] = sender
+			message = "You are going to send the message to " + recipient
+			
 		except ValueError:
 			message = message[2:] + " is not a valid phone number. Please submit a new " \
 			"and valid phone number beginning with \"@@\". If you need help " \
 			"enter \"\help\""
-			resp.message(message)
-			return str(resp)
+		resp.message(message)
+		return str(resp)
+
 	elif message[0:2] == "@+":
-		language = message[2:].lower()
+		language = message[2:]
 		if language not in supported_languages.values():
 			message = language + " is not a valid/and or supported language. Please submit a " \
 			"new and valid phone number beginning with \"@@\". If you need help " \
@@ -81,24 +84,18 @@ def receive():
 			resp.message(message)
 			return str(resp)
 	else:
-		#if (conversations[sender] is None):
-		#	message = "Please input a recipient to translate the message."
-		#	resp.message(message)
-		#	return str(resp)
-		#else:
-		#if (languageSpoken[conversations[sender]] is None):
-		#	language = languageSpoken[sender] #default lang is the same as the recipient
-		#message = translator.TransformTextMethod(message)
-		translate(sender, language, message)
+		print(recipient)
+		translate(sender, message)
 
 
     
-def translate(sender, language, message):
+def translate(sender, message):
+	print(recipient)
 	message = translator.translate(message, language)
 	send(sender, message)
 
-def send(sender, message, reci):
-	message = client.messages.create(to=conversations[sender], from_=twilioPhone,
+def send(sender, message):
+	message = client.messages.create(to=recipient, from_=twilioPhone,
                                      body = message)
 
 if __name__ == '__main__':
