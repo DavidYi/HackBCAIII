@@ -1,7 +1,6 @@
 {
-  "name": "Flask Boilerplate",
-  "description": "A quick way to get started with your flask projects",
-  "repository": "https://github.com/parasm/flask-boilerplate",
-  "logo": "http://flask.pocoo.org/docs/0.10/_static/flask.png",
-  "keywords": ["flask", "python", "boilerplate"]
+  "name": "Text Translator",
+  "description": "If this is online, you can text a number which will text to another number with your text translated to whatever language you wish it to be.",
+  "repository": "https://github.com/DavidYi/Text-Translator",
+  "keywords": ["flask", "python", "translator", "text"]
 }
